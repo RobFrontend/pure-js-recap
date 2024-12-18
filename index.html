@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Courts</title>
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      background-color: #151515;
+      color: #fefefe;
+      overflow-x: hidden;
+    }
+    h3 {
+      font-size: 32px;
+    }
+    p {
+      font-size: 18px;
+    }
+    .styled_ul {
+      color: #ddd;
+    }
+
+    #div_api {
+      display: flex;
+      width: 200%;
+      gap: 48px;
+      padding: 96px 24px;
+      transition: all 0.5s;
+    }
+
+    .api_box {
+      display: grid;
+      width: 100%;
+      background-color: #444;
+    }
+
+    #div_api .api_box div p,
+    #div_api .api_box div h3 {
+      padding: 18px;
+    }
+    #div_api .api_box img {
+      height: 100%;
+      width: 100%;
+      align-self: self-end;
+    }
+    #btns {
+      margin: 0 auto;
+      padding: 32px;
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: center;
+    }
+    #btns button {
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 999px;
+    }
+    #btns button:hover {
+      opacity: 0.8;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .api_page_2 {
+      transform: translateX(-50%);
+    }
+  </style>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/products.html">Produkty</a>
+    </nav>
+    <h1 id="headline"></h1>
+    <div id="div_script">
+      <h2>Headline 1 rendered from html</h2>
+    </div>
+    <div id="div_api"></div>
+    <div id="btns">
+      <button id="btn1" class="hidden">1</button>
+      <button id="btn2" class="hidden">2</button>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const supabase = createClient(
+      "https://pwdoalxbjdudcjnftvsw.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3ZG9hbHhiamR1ZGNqbmZ0dnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NDgxOTYsImV4cCI6MjAyNDUyNDE5Nn0.VWpNVwZDtmkojhbizy1BkgtFMtg4pNEeFo7I-RrsC4s"
+    );
+
+    async function getCourts() {
+      let { data: courts, error } = await supabase.from("courts").select("*");
+      return courts;
+    }
+
+    async function renderApi() {
+      const data = await getCourts();
+      console.log(data);
+
+      const renderedApi = data
+        .map(
+          (court) =>
+            `<div class='api_box'>
+              <div>
+          <h3>${court.name}</h3>
+          <p>${court.info}</p>
+          </div>
+          <img src=${court.image}>
+          </div>`
+        )
+        .join("");
+      // const renderedApi = data
+      //   .map(
+      //     (court) =>
+      //       "<div>" +
+      //       "<div>" +
+      //       "<h3>" +
+      //       court.name +
+      //       "</h3>" +
+      //       "<p>" +
+      //       court.info +
+      //       "</p>" +
+      //       "</div>" +
+      //       "<img src=" +
+      //       court.image +
+      //       ">" +
+      //       "</div>"
+      //   )
+      //   .join("");
+
+      document
+        .getElementById("div_api")
+        .insertAdjacentHTML("afterbegin", renderedApi);
+      console.log(renderedApi);
+    }
+
+    setTimeout(() => {
+      renderApi();
+    }, 1000);
+
+    setTimeout(() => {
+      document.getElementById("btn2").classList.remove("hidden");
+      document.getElementById("btn1").classList.remove("hidden");
+    }, 1100);
+
+    document.getElementById("btn2").addEventListener("click", function () {
+      document.getElementById("div_api").classList.add("api_page_2");
+    });
+    document.getElementById("btn1").addEventListener("click", function () {
+      document.getElementById("div_api").classList.remove("api_page_2");
+    });
+
+    document.getElementById("headline").textContent = "Hello World";
+    const liContent = "five";
+    const liAdded = "<li>" + liContent + "</li>";
+
+    if (window.location.href === "http://127.0.0.1:5500/") {
+      console.log("działa ===");
+    }
+
+    if (window.location.href.includes("index")) {
+      console.log("działa contain");
+    }
+
+    console.log(window.location.href);
+
+    function renderDiv() {
+      const renderedDiv = `
+      <div>
+        <h2>Headline 2 rendered from script</h2>
+        <p>random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote</p>
+        <ul class='styled_ul'>
+          <li>one</li>
+          <li>two</li>
+          <li>three</li>
+          <li>four</li>
+          ${liAdded}
+          </ul>
+        </div>
+            `;
+      document
+        .getElementById("div_script")
+        .insertAdjacentHTML("beforeend", renderedDiv);
+    }
+
+    setTimeout(() => {
+      renderDiv();
+    }, 500);
+  </script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Courts / Products</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/products.html">Produkty</a>
+    </nav>
+    <div id="div_script"></div>
+    <div id="div_api"></div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const supabase = createClient(
+      "https://pwdoalxbjdudcjnftvsw.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3ZG9hbHhiamR1ZGNqbmZ0dnN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NDgxOTYsImV4cCI6MjAyNDUyNDE5Nn0.VWpNVwZDtmkojhbizy1BkgtFMtg4pNEeFo7I-RrsC4s"
+    );
+
+    async function getCourts() {
+      let { data: courts, error } = await supabase.from("courts").select("*");
+      return courts;
+    }
+
+    async function renderApi() {
+      const data = await getCourts();
+      console.log(data);
+
+      const renderedApi = data
+        .map(
+          (court) =>
+            `<div>
+              <div>
+          <h3>${court.name}</h3>
+          <p>${court.info}</p>
+          </div>
+          <img src=${court.image}>
+          </div>`
+        )
+        .join("");
+
+      document
+        .getElementById("div_api")
+        .insertAdjacentHTML("afterbegin", renderedApi);
+      console.log(renderedApi);
+    }
+    if (!window.location.href.includes("products")) {
+      setTimeout(() => {
+        renderApi();
+      }, 1000);
+    }
+
+    const liContent = "five";
+    const liAdded = "<li>" + liContent + "</li>";
+
+    if (window.location.href === "http://127.0.0.1:5500/") {
+      console.log("działa ===");
+    }
+
+    if (window.location.href.includes("products")) {
+      console.log("działa contain");
+    }
+
+    console.log(window.location.href);
+
+    function renderDiv() {
+      const renderedDiv = `
+      <div>
+        <h2>Headline 2 rendered from script</h2>
+        <p>random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote random quote</p>
+        <ul class='styled_ul'>
+          <li>one</li>
+          <li>two</li>
+          <li>three</li>
+          <li>four</li>
+          ${liAdded}
+          </ul>
+        </div>
+            `;
+      document
+        .getElementById("div_script")
+        .insertAdjacentHTML("beforeend", renderedDiv);
+    }
+
+    setTimeout(() => {
+      renderDiv();
+    }, 1000);
+  </script>
+</html>
